@@ -1,0 +1,60 @@
+1. Data Preparation:
+
+Gather Images: 
+        Collect a diverse set of images containing web browsers with address bars visible. The more variations you have (different browsers, window sizes, background colors, text fonts),
+ the better your model will generalize.
+Annotate Address Bars: 
+            Use an image annotation tool (e.g., VGG Image Annotator (VIA) or LabelImg) to create bounding boxes around the address bars in each image.
+ Ensure the annotations are accurate for optimal training.
+
+2. YOLO Training:
+
+Choose a YOLO Version: 
+            Popular choices for object detection include YOLOv5, YOLOv7, and YOLOv8. Consider factors like complexity, training speed, and accuracy requirements
+ when selecting a version.
+Train the YOLO Model: 
+            Use a deep learning framework like PyTorch or TensorFlow to train your YOLO model on the annotated dataset. This will involve setting training parameters
+             (learning rate, batch size, epochs) and monitoring the training process to avoid overfitting.
+
+3. Address Text Extraction (Optional):
+
+Optical Character Recognition (OCR): Once YOLO detects the address bar region in an image using the bounding box, you can leverage OCR libraries like Tesseract or
+ PyTesseract to extract the actual text within the address bar. Note that OCR accuracy can vary depending on text clarity and complexity.
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________
+
+CODE
+
+# Import libraries
+import torch
+from yolov5 import Detector
+
+# Load trained YOLO model
+model = Detector("path/to/your/yolov5s.pt")
+
+# Function to extract address text
+def extract_address_text(image_path):
+    # Load image
+    image = torch.as_tensor(cv2.imread(image_path))
+
+    # Perform YOLO detection
+    results = model(image)
+
+    # Check for detected address bar (assuming class ID for address bar is 0)
+    if results.pandas().xyxy[0]['name'] == 0:
+        # Get bounding box coordinates
+        x_min, y_min, x_max, y_max = results.pandas().xyxy[0][['xmin', 'ymin', 'xmax', 'ymax']].tolist()
+
+        # Crop image for address bar region
+        address_bar_image = image[:, y_min:y_max, x_min:x_max]
+
+        # Apply OCR to extract text
+        text = pytesseract.image_to_string(address_bar_image)
+        return text
+    else:
+        return "Address bar not detected"
+
+# Example usage
+image_path = "path/to/your/image.jpg"
+extracted_text = extract_address_text(image_path)
+print(f"Extracted text: {extracted_text}")
