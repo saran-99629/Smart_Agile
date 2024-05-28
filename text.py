@@ -1,90 +1,101 @@
-# import wmi
+# import psutil
+# import os
+# from collections import defaultdict
 
-# def monitor_background_apps(memory_threshold_mb=100):
-#     """
-#     Monitors running background apps on Windows and identifies those exceeding 
-#     a specified memory usage threshold.
+# def get_running_apps():
+#     apps = defaultdict(int)
+#     for proc in psutil.process_iter(['pid', 'name', 'exe']):
+#         exe_path = proc.info.get('exe')
+#         if exe_path and ("Program Files" in exe_path or "Program Files (x86)" in exe_path):
+#             apps[os.path.basename(exe_path)] += 1
+#     return apps
 
-#     Args:
-#         memory_threshold_mb (int, optional): The memory usage threshold in MB. 
-#             Processes exceeding this limit will be flagged. Defaults to 100 MB.
-#     """
+# def print_running_apps(apps):
+#     total = sum(apps.values())
+#     print("Running User Applications:")
+#     for app, count in apps.items():
+#         percentage = (count / total) * 100
+#         print(f"{app}: {count} instances ({percentage:.2f}%)")
 
-#     try:
-#         # Connect to WMI
-#         c = wmi.WMI()
-
-#         print("** Background Apps Monitoring Report **")
-#         print(f"Memory Threshold: {memory_threshold_mb} MB")
-#         print("--------------------------------------")
-
-#         # Query for running processes
-#         processes = c.Win32_Process()
-
-#         # Loop through processes and display information
-#         for process in processes:
-#             memory_usage_mb = int(process.WorkingSetSize) / (1024 * 1024)  # Convert bytes to MB
-#             if memory_usage_mb > memory_threshold_mb:
-#                 print("** High Memory Usage Alert! **")
-#             print(f"Process Name: {process.Name}")
-#             print(f"Process ID: {process.ProcessId}")
-#             print(f"Memory Usage: {memory_usage_mb:.2f} MB")  # Format to 2 decimal places
-#             print("-------------------------")
-    
-#     except Exception as e:
-#         print(f"Error occurred while monitoring background apps: {e}")
-
-# # Example Usage
-# monitor_background_apps()  # Run with default 100 MB threshold
-
-# # Adjust memory threshold if desired
-# monitor_background_apps(memory_threshold_mb=50)  # Monitor for processes using over 50 MB
+# if __name__ == "__main__":
+#     running_apps = get_running_apps()
+#     print_running_apps(running_apps)
 
 
-
+# working with piechart
 
 
 # import psutil
+# import os
+# import matplotlib.pyplot as plt
+# from collections import defaultdict
 
-# def get_background_apps_cpu_times():
-#     """
-#     Retrieves CPU times for background apps using psutil.
-#     """
-#     try:
-#         print("** Background Apps CPU Times **")
-#         print("--------------------------------")
-#         for proc in psutil.process_iter(['pid', 'name', 'cpu_times']):
-#             # Check if the process is a background app (you may need to customize this condition)
-#             if "background_app_criteria" in proc.info['name']:
-#                 print(f"Process Name: {proc.info['name']}")
-#                 print(f"Process PID: {proc.info['pid']}")
-#                 print(f"CPU Times: {proc.info['cpu_times']}")
-#                 print("-------------------------")
-#     except Exception as e:
-#         print(f"Error occurred while retrieving CPU times: {e}")
+# def get_running_apps():
+#     apps = defaultdict(int)
+#     for proc in psutil.process_iter(['pid', 'name', 'exe']):
+#         exe_path = proc.info.get('exe')
+#         if exe_path and ("Program Files" in exe_path or "Program Files (x86)" in exe_path):
+#             apps[os.path.basename(exe_path)] += 1
+#     return apps
 
-# # Example Usage
-# get_background_apps_cpu_times()
+# def plot_running_apps(apps):
+#     labels = list(apps.keys())
+#     sizes = list(apps.values())
+
+#     plt.figure(figsize=(10, 8))
+#     plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
+#     plt.axis('equal')
+#     plt.title('Running User Applications')
+#     plt.show()
+
+# def print_running_apps(apps):
+#     total = sum(apps.values())
+#     print("Running User Applications:")
+#     for app, count in apps.items():
+#         percentage = (count / total) * 100
+#         print(f"{app}: {count} instances ({percentage:.2f}%)")
+
+# if __name__ == "__main__":
+#     running_apps = get_running_apps()
+#     plot_running_apps(running_apps)
+#     print_running_apps(running_apps)
 
 
-
-
+# bar graph presentation
 import psutil
+import os
+import matplotlib.pyplot as plt
+from collections import defaultdict
 
-def get_all_processes_cpu_times():
-    """
-    Retrieves CPU times for all running processes using psutil.
-    """
-    try:
-        print("** All Processes CPU Times **")
-        print("-----------------------------")
-        for proc in psutil.process_iter(['pid', 'name', 'cpu_times']):
-            print(f"Process Name: {proc.info['name']}")
-            print(f"Process PID: {proc.info['pid']}")
-            print(f"CPU Times: {proc.info['cpu_times']}")
-            print("-------------------------")
-    except Exception as e:
-        print(f"Error occurred while retrieving CPU times: {e}")
+def get_running_apps():
+    apps = defaultdict(int)
+    for proc in psutil.process_iter(['pid', 'name', 'exe']):
+        exe_path = proc.info.get('exe')
+        if exe_path and ("Program Files" in exe_path or "Program Files (x86)" in exe_path):
+            apps[os.path.basename(exe_path)] += 1
+    return apps
 
-# Example Usage
-get_all_processes_cpu_times()
+def plot_running_apps(apps):
+    labels = list(apps.keys())
+    values = list(apps.values())
+
+    plt.figure(figsize=(12, 6))
+    plt.bar(labels, values, color='skyblue')
+    plt.xlabel('Applications')
+    plt.ylabel('Number of Instances')
+    plt.title('Running User Applications')
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.show()
+
+def print_running_apps(apps):
+    total = sum(apps.values())
+    print("Running User Applications:")
+    for app, count in apps.items():
+        percentage = (count / total) * 100
+        print(f"{app}: {count} instances ({percentage:.2f}%)")
+
+if __name__ == "__main__":
+    running_apps = get_running_apps()
+    plot_running_apps(running_apps)
+    print_running_apps(running_apps)
